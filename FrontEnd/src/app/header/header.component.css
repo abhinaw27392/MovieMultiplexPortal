@@ -1,0 +1,10 @@
+nav a:hover {
+    background-position-x: 50%; 
+    background-color: #0c73cc;
+}
+.navbar{
+  height: 45px;
+}
+nav {
+  background-color: #4267b2;
+}

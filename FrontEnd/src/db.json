@@ -1,0 +1,12 @@
+{
+  "movieData": [
+    {
+      "movieName": "Bad Boy",
+      "movieCategory": "action and comedy",
+      "movieProducer": "xxx",
+      "movieDirector": "yyy",
+      "releaseDate": "2010-09-09",
+      "id": 1
+    }
+  ]
+}
