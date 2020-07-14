@@ -1,7 +1,8 @@
 <div>
   <h3>MOVIE MANAGEMENT</h3>
   <button title="ADD MOVIE" class="btn" data-toggle="modal" data-target="#movieModal" (click)="onClickOnAdd()"
-    style="float: right; margin-right: 5%;margin-bottom: 0.5%;"><img src="assets/icons/plus-circle-solid.svg" alt="Add Movie" /></button>
+    style="float: right; margin-right: 5%;margin-bottom: 0.5%;"><img src="assets/icons/plus-circle-solid.svg"
+      alt="Add Movie" /></button>
   <br /><br />
 
   <!--datatable for movie data -->
@@ -20,9 +21,9 @@
     <tbody>
       <tr *ngFor="let data of movieData">
         <td style="text-align: center;">
-          <a title="Del Movie" data-toggle="modal" data-target="#deleteModal"
+          <a title="Del Movie" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer;"
             (click)="getEachRowMovieDetails(data.id)"><img src="assets/icons/trash-alt-solid.svg" alt="Del" /></a>
-          <a title="Edit Movie" data-toggle="modal" data-target="#movieModal" style="margin-left: 30px;"
+          <a title="Edit Movie" data-toggle="modal" data-target="#movieModal" style="margin-left: 30px;cursor: pointer;"
             (click)="getEachRowMovieDetails(data.id)">
             <img src="assets/icons/edit-regular.svg" alt="Edit" />
           </a>
@@ -53,6 +54,15 @@
               <div class="col-sm-9">
                 <input class="form-control" type="text" placeholder="Enter Movie Name"
                   [formControl]="movieFormGroup.controls['movie_name']" />
+                <small
+                  *ngIf="movieFormGroup.controls['movie_name'].hasError('required') && movieFormGroup.controls['movie_name'].dirty"
+                  class="text-warning">Movie Name Required!</small>
+                <small
+                  *ngIf="movieFormGroup.controls['movie_name'].hasError('maxlength') && movieFormGroup.controls['movie_name'].dirty"
+                  class="text-warning">Maximum 30 characters are allowed! </small>
+                <small *ngIf="movieFormGroup.controls['movie_name'].hasError('space') && movieFormGroup.controls['movie_name'].dirty &&
+                  !movieFormGroup.controls['movie_name'].hasError('required')" class="text-warning">Please Enter
+                  Correct Movie Name!</small>
               </div>
             </div>
             <div class="form-group row">
@@ -60,6 +70,15 @@
               <div class="col-sm-9">
                 <input class="form-control" type="text" placeholder="Enter Category"
                   [formControl]="movieFormGroup.controls['category']" />
+                <small
+                  *ngIf="movieFormGroup.controls['category'].hasError('required') && movieFormGroup.controls['category'].dirty"
+                  class="text-warning">Movie Category required!</small>
+                <small
+                  *ngIf="movieFormGroup.controls['category'].hasError('maxlength') && movieFormGroup.controls['category'].dirty"
+                  class="text-warning">Maximum 30 characters are allowed! </small>
+                <small *ngIf="movieFormGroup.controls['category'].hasError('space') && movieFormGroup.controls['category'].dirty &&
+                  !movieFormGroup.controls['category'].hasError('required')" class="text-warning">Please Enter Correct
+                  Movie Category!</small>
               </div>
             </div>
             <div class="form-group row">
@@ -67,6 +86,15 @@
               <div class="col-sm-9">
                 <input class="form-control" type="text" placeholder="Enter Producer Name"
                   [formControl]="movieFormGroup.controls['producer']" />
+                <small
+                  *ngIf="movieFormGroup.controls['producer'].hasError('required') && movieFormGroup.controls['producer'].dirty"
+                  class="text-warning">Producer Name required!</small>
+                <small
+                  *ngIf="movieFormGroup.controls['producer'].hasError('maxlength') && movieFormGroup.controls['producer'].dirty"
+                  class="text-warning">Maximum 30 characters are allowed! </small>
+                <small *ngIf="movieFormGroup.controls['producer'].hasError('space') && movieFormGroup.controls['producer'].dirty &&
+                  !movieFormGroup.controls['producer'].hasError('required')" class="text-warning">Please Enter Correct
+                  Producer Name!</small>
               </div>
             </div>
             <div class="form-group row">
@@ -74,13 +102,28 @@
               <div class="col-sm-9">
                 <input class="form-control" type="text" placeholder="Enter Director Name"
                   [formControl]="movieFormGroup.controls['director']" />
+                <small
+                  *ngIf="movieFormGroup.controls['director'].hasError('required') && movieFormGroup.controls['director'].dirty"
+                  class="text-warning">Director Name required!</small>
+                <small
+                  *ngIf="movieFormGroup.controls['director'].hasError('maxlength') && movieFormGroup.controls['director'].dirty"
+                  class="text-warning">Maximum 30 characters are allowed! </small>
+                <small *ngIf="movieFormGroup.controls['director'].hasError('space') && movieFormGroup.controls['director'].dirty &&
+                  !movieFormGroup.controls['director'].hasError('required')" class="text-warning">Please Enter Correct
+                  Director Name!</small>
               </div>
             </div>
             <div class="form-group row">
               <label class="col-sm-3">Release Date</label>
               <div class="col-sm-9">
-                <input class="form-control" type="text" placeholder="Enter Release Date"
+                <input class="form-control" type="date" min="1960-01-01" max="2050-01-01"
                   [formControl]="movieFormGroup.controls['release_date']" />
+                <small
+                  *ngIf="movieFormGroup.controls['release_date'].hasError('required') && movieFormGroup.controls['release_date'].dirty"
+                  class="text-warning">Release Date required!</small>
+                <small *ngIf="movieFormGroup.controls['release_date'].hasError('dateValidator') && movieFormGroup.controls['release_date'].dirty &&
+                  !movieFormGroup.controls['release_date'].hasError('required')" class="text-warning">Please Enter
+                  correct Date!</small>
               </div>
             </div>
             <div class="modal-footer">

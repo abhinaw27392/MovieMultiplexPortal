@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit } from '@angular
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
+import { trim } from 'jquery';
 
 import { MovieDataService } from './../service/data/movie-data.service';
 import { Movie } from './../model/movie'
@@ -27,12 +28,31 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
   movieFormGroup: FormGroup;
   constructor(private movieService: MovieDataService, private formBuilder: FormBuilder) {
     this.movieFormGroup = formBuilder.group({
-      "movie_name": new FormControl("", Validators.required),
-      "category": new FormControl("", Validators.required),
-      "producer": new FormControl("", Validators.required),
-      "director": new FormControl("", Validators.required),
-      "release_date": new FormControl("", Validators.required)
+      "movie_name": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
+      "category": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
+      "producer": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
+      "director": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
+      "release_date": new FormControl("", Validators.compose([Validators.required, this.dateValidator]))
     });
+  }
+  // custom validators
+  // for space validation
+  spaceValidator(formControl: FormControl) {
+    if (formControl.value != "" && trim(formControl.value) == "") {
+      return {
+        "space": true
+      }
+    }
+  }
+  dateValidator(formControl: FormControl) {
+    let dateRegex = /^\d{4}[./-]\d{2}[./-]\d{2}$/;
+    if (formControl.value != null) {
+      if (!formControl.value.match(dateRegex)) {
+        return {
+          "dateValidator": true
+        }
+      }
+    }
   }
 
   getAllMovieData() {
@@ -65,7 +85,7 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
     );
   }
 
-    getEachRowMovieDetails(id: string) {
+  getEachRowMovieDetails(id: string) {
     this.modalTitle = "EDIT";
     this.movieService.getOneMovie(id).subscribe(
       (data) => {
@@ -118,7 +138,7 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
   onClickOnDelete() {
     console.log(this.movie.id);
     this.movieService.deleteMovie(this.movie.id, this.userId).subscribe(
-      (response)=> {
+      (response) => {
         console.log(response);
         this.getAllMovieData();
         this.rerender();
