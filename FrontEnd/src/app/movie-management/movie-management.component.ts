@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit } from '@angular
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
-import { trim } from 'jquery';
 
 import { MovieDataService } from './../service/data/movie-data.service';
 import { Movie } from './../model/movie'
+import { AlertService } from './../service/alert.service';
 
 @Component({
   selector: 'app-movie-management',
@@ -26,7 +26,7 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
   releaseDate: string;
 
   movieFormGroup: FormGroup;
-  constructor(private movieService: MovieDataService, private formBuilder: FormBuilder) {
+  constructor(private movieService: MovieDataService, private formBuilder: FormBuilder, private alertService: AlertService) {
     this.movieFormGroup = formBuilder.group({
       "movie_name": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
       "category": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
@@ -38,7 +38,7 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
   // custom validators
   // for space validation
   spaceValidator(formControl: FormControl) {
-    if (formControl.value != "" && trim(formControl.value) == "") {
+    if (formControl.value != null && formControl.value.trim() == "") {
       return {
         "space": true
       }
@@ -56,6 +56,7 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getAllMovieData() {
+    console.log("getAllMovieData executing.........");
     this.movieService.getallData().subscribe((data: Movie[]) => {
       this.movieData = data;
       this.rerender();
@@ -76,11 +77,12 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
       (response: Movie) => {
         console.log(response);
         this.movieData.push(response);
+        this.alertService.success("Movie added successfully!", true);
         this.getAllMovieData();
         this.rerender();
         this.movieFormGroup.reset();
       }, (err) => {
-        console.log(err);
+        this.alertService.error(err, true);
       }
     );
   }
@@ -90,10 +92,9 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
     this.movieService.getOneMovie(id).subscribe(
       (data) => {
         this.movie = data;
-        console.log(this.movie);
         this.setValueToEditForm();
       }, (err) => {
-        console.log(err);
+        this.alertService.error(err, true);
       }
     );
   }
@@ -121,16 +122,16 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   updateMovie() {
     this.getValueFromForm();
-    console.log(this.movieName);
     this.movieService.updateMovie(this.movie.id, new Movie(this.movieName, this.movieCategory, this.movieProducer, this.movieDirector, this.releaseDate), this.userId).subscribe(
       (response: Movie) => {
         console.log(response);
+        this.alertService.success("Movie updated successfully!", true);
         this.getAllMovieData();
         this.rerender();
         this.movieFormGroup.reset();
         this.movie = "";
       }, (err) => {
-        console.log(err);
+        this.alertService.error(err, true);
       }
     );
   }
@@ -140,10 +141,13 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
     this.movieService.deleteMovie(this.movie.id, this.userId).subscribe(
       (response) => {
         console.log(response);
+        this.alertService.success("Movie deleted successfully!", true);
         this.getAllMovieData();
         this.rerender();
         this.movieFormGroup.reset();
         this.movie = "";
+      }, err => {
+        this.alertService.error(err, true);
       }
     )
   }

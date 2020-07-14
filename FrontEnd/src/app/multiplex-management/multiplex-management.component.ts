@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { trim } from 'jquery';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 
 import { Multiplex } from './../model/multiplex';
 import { MultiplexDataService } from './../service/data/multiplex-data.service';
+import { AlertService } from '../service/alert.service';
 
 
 @Component({
@@ -25,7 +25,7 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
   numberOfScreens: number;
 
   multiplexFormGroup: FormGroup;
-  constructor(private multiplexService: MultiplexDataService, private formBuilder: FormBuilder) {
+  constructor(private multiplexService: MultiplexDataService, private formBuilder: FormBuilder, private alertService: AlertService) {
     this.multiplexFormGroup = formBuilder.group({
       "multiplex_name": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
       "address": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(40), this.spaceValidator])),
@@ -33,9 +33,9 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
     });
   }
   // custom validators
-  // for space validation
+  // for space validation in input feilds
   spaceValidator(formControl: FormControl) {
-    if (formControl.value != "" && trim(formControl.value) == "") {
+    if (formControl.value != null && formControl.value.trim() == "") {
       return {
         "space": true
       }
@@ -49,7 +49,7 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
       }
     }
   }
-  // validator for zero not allowed
+  // validator for zero/negative number not allowed in screen number feild
   zeroAndNegativeNotAllowed(formControl: FormControl) {
     if (formControl.value != null && formControl.value <= 0) {
       return {
@@ -62,7 +62,10 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
     this.multiplexService.getallData().subscribe((data: Multiplex[]) => {
       this.multiplexData = data;
       this.rerender();
-    }, (err) => { console.log(err) });
+    }, (err) => {
+      console.log(err);
+      this.alertService.error(err, true);
+    });
   }
 
   saveMultiplex() {
@@ -79,11 +82,13 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
       (response: Multiplex) => {
         console.log(response);
         this.multiplexData.push(response);
+        this.alertService.success("Multiplex added successfully!", true);
         this.getAllMultiplexData();
         this.rerender();
         this.multiplexFormGroup.reset();
       }, (err) => {
         console.log(err);
+        this.alertService.error(err, true);
       }
     );
   }
@@ -97,6 +102,7 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
         this.setValueToEditForm();
       }, (err) => {
         console.log(err);
+        this.alertService.error(err, true);
       }
     );
   }
@@ -125,12 +131,14 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
       this.userId).subscribe(
         (response: Multiplex) => {
           console.log(response);
+          this.alertService.success("Multiplex updated successfully!", true);
           this.getAllMultiplexData();
           this.rerender();
           this.multiplexFormGroup.reset();
           this.multiplex = "";
         }, (err) => {
           console.log(err);
+          this.alertService.error(err, true);
         }
       );
   }
@@ -140,10 +148,13 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
     this.multiplexService.deleteMultiplex(this.multiplex.id, this.userId).subscribe(
       (response) => {
         console.log(response);
+        this.alertService.success("Multiplex deleted successfully!", true);
         this.getAllMultiplexData();
         this.rerender();
         this.multiplexFormGroup.reset();
         this.multiplex = "";
+      }, err => {
+        this.alertService.error(err, true);
       }
     )
   }

@@ -20,7 +20,6 @@ export class MovieDataService {
   }
 
   addMovie(movie : Movie, userId: string) {
-    console.log(movie);
     return this.http.post(MOVIE_API_URL + "?userId=" + userId, movie);
   }
 

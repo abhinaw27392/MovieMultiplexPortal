@@ -14,6 +14,7 @@ import { MultiplexManagementComponent } from './multiplex-management/multiplex-m
 import { AllotMovieComponent } from './allot-movie/allot-movie.component';
 import { SearchComponent } from './search/search.component';
 import { ErrorComponent } from './error/error.component';
+import { AlertComponent } from './alert/alert.component';
 
 
 
@@ -27,7 +28,8 @@ import { ErrorComponent } from './error/error.component';
     MultiplexManagementComponent,
     AllotMovieComponent,
     SearchComponent,
-    ErrorComponent
+    ErrorComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,

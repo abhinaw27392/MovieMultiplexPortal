@@ -1,0 +1,19 @@
+<div *ngIf="isError" class="alert alert-danger alert-dismissible fade show">
+    <button type="button" class="close" (click)=closeError()>&times;</button>
+    <strong>{{message}}</strong>
+</div>
+
+<div *ngIf="isWarning" class="alert alert-warning alert-dismissible fade show">
+    <button type="button" class="close" (click)=closeWarning()>&times;</button>
+    <strong>{{message}}</strong>
+</div>
+
+<div *ngIf="isSuccess" class="alert alert-success alert-dismissible fade show">
+    <button type="button" class="close" (click)=closeSuccess()>&times;</button>
+    <strong>{{message}}</strong>
+</div>
+
+<div *ngIf="isInfo" class="alert alert-info alert-dismissible fade show">
+    <button type="button" class="close" (click)=closeInfo()>&times;</button>
+    <strong>{{message}}</strong>
+</div>
