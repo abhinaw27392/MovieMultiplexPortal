@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TableDataService } from './table-data.service';
+import { MultiplexDataService } from './multiplex-data.service';
 
-describe('TableDataService', () => {
-  let service: TableDataService;
+describe('MultiplexDataService', () => {
+  let service: MultiplexDataService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(TableDataService);
+    service = TestBed.inject(MultiplexDataService);
   });
 
   it('should be created', () => {

@@ -1,1 +1,130 @@
-<p>multiplex-management works!</p>
+<div>
+    <h3>MULTIPLEX MANAGEMENT</h3>
+    <button title="ADD MOVIE" class="btn" data-toggle="modal" data-target="#multiplexModal" (click)="onClickOnAdd()"
+        style="float: right; margin-right: 5%;margin-bottom: 0.5%;"><img src="assets/icons/plus-circle-solid.svg"
+            alt="Add Multiplex" /></button>
+    <br /><br />
+
+    <!--datatable for multiplex data -->
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+        class="table table-striped table-bordered table-sm row-border hover">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Multiplex Name</th>
+                <th>Address</th>
+                <th>Number Of Screen</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of multiplexData">
+                <td>
+                    <a title="Del Multiplex" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer;"
+                        (click)="getEachRowMultiplexDetails(data.id)"><img src="assets/icons/trash-alt-solid.svg"
+                            alt="Del" /></a>
+                    <a title="Edit Multiplex" data-toggle="modal" data-target="#multiplexModal"
+                        style="margin-left: 30px;cursor: pointer;" (click)="getEachRowMultiplexDetails(data.id)">
+                        <img src="assets/icons/edit-regular.svg" alt="Edit" />
+                    </a>
+                </td>
+                <td>{{data.multiplexName}}</td>
+                <td>{{data.address}}</td>
+                <td>{{data.numberOfScreens}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- dialogue box/modal for Add/Edit Multiplex -->
+    <div class="modal fade" id="multiplexModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{modalTitle}} MULTIPLEX</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="multiplexFormGroup">
+                        <div class="form-group row">
+                            <label class="col-sm-4">Multiplex Name</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" placeholder="Enter Multiplex Name"
+                                    [formControl]="multiplexFormGroup.controls['multiplex_name']" />
+                                <small *ngIf="multiplexFormGroup.controls['multiplex_name'].hasError('required') && 
+                                        multiplexFormGroup.controls['multiplex_name'].dirty"
+                                    class="text-warning">Multiplex Name Required!</small>
+                                <small *ngIf="multiplexFormGroup.controls['multiplex_name'].hasError('maxlength') && 
+                                        multiplexFormGroup.controls['multiplex_name'].dirty"
+                                    class="text-warning">Maximum 30 characters are allowed! </small>
+                                <small *ngIf="multiplexFormGroup.controls['multiplex_name'].hasError('space') && 
+                                        multiplexFormGroup.controls['multiplex_name'].dirty &&
+                                            !multiplexFormGroup.controls['multiplex_name'].hasError('required')"
+                                    class="text-warning">Please Enter Correct Multiplex Name!</small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4">Address</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" placeholder="Enter Address"
+                                    [formControl]="multiplexFormGroup.controls['address']" />
+                                <small *ngIf="multiplexFormGroup.controls['address'].hasError('required') && 
+                                        multiplexFormGroup.controls['address'].dirty" class="text-warning">Multiplex
+                                    Address required!</small>
+                                <small *ngIf="multiplexFormGroup.controls['address'].hasError('maxlength') && 
+                                        multiplexFormGroup.controls['address'].dirty" class="text-warning">Maximum 40
+                                    characters are allowed! </small>
+                                <small *ngIf="multiplexFormGroup.controls['address'].hasError('space') && 
+                                        multiplexFormGroup.controls['address'].dirty &&
+                                        !multiplexFormGroup.controls['address'].hasError('required')"
+                                    class="text-warning">Please Enter Correct Multiplex Address!</small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4">Number Of Screen</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="number" placeholder="Enter Number Of Screen"
+                                    [formControl]="multiplexFormGroup.controls['number_of_screen']" />
+                                <small *ngIf="multiplexFormGroup.controls['number_of_screen'].hasError('required') && 
+                                        multiplexFormGroup.controls['number_of_screen'].dirty"
+                                    class="text-warning">Number Of Screen required!</small>
+                                <small *ngIf="multiplexFormGroup.controls['number_of_screen'].hasError('maxNumber') && 
+                                        multiplexFormGroup.controls['number_of_screen'].dirty"
+                                    class="text-warning">Maximum 10 screens are allowed! </small>
+                                <small *ngIf="multiplexFormGroup.controls['number_of_screen'].hasError('zeroAndNegativeNotAllowed') && 
+                                        multiplexFormGroup.controls['number_of_screen'].dirty"
+                                    class="text-warning">Please Enter Correct Number Of Screen!</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success" (click)="saveMultiplex()"
+                                [disabled]="!multiplexFormGroup.valid" data-dismiss="modal">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- dialogue box to delete record -->
+    <div class="modal" tabindex="-1" id="deleteModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this multiplex?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" (click)="onClickOnDelete()"
+                        data-dismiss="modal">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
