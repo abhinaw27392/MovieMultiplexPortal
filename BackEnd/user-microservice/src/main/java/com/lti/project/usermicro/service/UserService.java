@@ -1,5 +1,6 @@
 package com.lti.project.usermicro.service;
 
+import java.security.Principal;
 import java.util.List;
 
 import com.lti.project.usermicro.dto.RegisterDto;
@@ -14,5 +15,5 @@ public interface UserService {
 
 	public UserDetailDto updateUserDetails(String userId, UserDetailDto userDetailDto);
 
-//	public UserDetailDto login(LoginDto loginDto);
+	public UserDetailDto login(Principal principal);
 }

@@ -1,5 +1,7 @@
 package com.lti.project.usermicro.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,38 +11,49 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
-	
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception{
-		http.csrf().disable()
-		.authorizeRequests().antMatchers("/api/user/**").permitAll()
-		.anyRequest().authenticated()
-		.and()
-			.formLogin().loginPage("/login").permitAll()
-		.and()
-			.logout().invalidateHttpSession(true)
-			.clearAuthentication(true)
-			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-			.logoutSuccessUrl("/logout-success").permitAll();
+	// cors configuration
+	@Bean
+	public CorsFilter corsFilter() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		configuration.setAllowCredentials(true);
+		configuration.addAllowedOrigin("*");
+		configuration.addAllowedHeader("*");
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+		source.registerCorsConfiguration("/**", configuration);
+		return new CorsFilter(source);
 	}
 	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.cors()
+		.and()
+			.csrf().disable()
+			.authorizeRequests()
+			.antMatchers("/api/user/**").permitAll()
+		.and()
+			.httpBasic();
+	}
+
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
 	}
-	
+
 }

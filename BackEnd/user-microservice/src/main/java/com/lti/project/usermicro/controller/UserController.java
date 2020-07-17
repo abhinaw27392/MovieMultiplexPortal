@@ -1,5 +1,6 @@
 package com.lti.project.usermicro.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,7 +10,6 @@ import org.springframework.boot.web.server.WebServerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,10 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lti.project.usermicro.dto.LoginDto;
 import com.lti.project.usermicro.dto.RegisterDto;
 import com.lti.project.usermicro.dto.UserDetailDto;
-import com.lti.project.usermicro.exception.CustomException;
 import com.lti.project.usermicro.service.UserService;
 
 @RestController
@@ -83,17 +81,15 @@ public class UserController {
 		return new ResponseEntity<UserDetailDto>(userDetailDto, HttpStatus.OK);
 	}
 
-//	@PostMapping("/login")
-//	public ResponseEntity<UserDetailDto> login(@RequestBody LoginDto loginDto, BindingResult result) throws Exception {
-//		UserDetailDto userDetailDto;
-//		try {
-//			if (result.hasErrors())
-//				throw new CustomException("password format is incorrect!");
-//			userDetailDto = this.userService.login(loginDto);
-//		} catch (Exception e) {
-//			throw new WebServerException(e.getMessage(), e);
-//		}
-//		return new ResponseEntity<UserDetailDto>(userDetailDto, HttpStatus.OK);
-//	}
+	@GetMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserDetailDto> login(Principal principal) throws Exception {
+		UserDetailDto userDetail;
+		try {
+			userDetail = this.userService.login(principal);
+		} catch (Exception e) {
+			throw new WebServerException(e.getMessage(), e);
+		}
+		return new ResponseEntity<UserDetailDto>(userDetail, HttpStatus.OK);
+	}
 
 }

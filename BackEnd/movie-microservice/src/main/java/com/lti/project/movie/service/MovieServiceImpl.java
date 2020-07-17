@@ -245,7 +245,7 @@ public class MovieServiceImpl implements MovieService {
 		// validation for user
 		UserDetailDto userDetailDto = this.userDetailFeignProxy.getUserDetails(userId).getBody();
 		if (!userDetailDto.getRole().equals("ADMIN"))
-			throw new Exception("To Perform this operation you need ADMIN previlage");
+			throw new Exception("To Perform this operation you need ADMIN privilege");
 	}
 
 	@Override

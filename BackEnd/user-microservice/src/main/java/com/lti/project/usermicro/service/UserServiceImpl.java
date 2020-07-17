@@ -1,5 +1,6 @@
 package com.lti.project.usermicro.service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.lti.project.usermicro.dao.UserRepository;
 import com.lti.project.usermicro.document.User;
-import com.lti.project.usermicro.dto.LoginDto;
 import com.lti.project.usermicro.dto.RegisterDto;
 import com.lti.project.usermicro.dto.UserDetailDto;
 import com.lti.project.usermicro.exception.CustomException;
@@ -135,22 +135,23 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-//	@Override
-//	public UserDetailDto login(LoginDto loginDto) throws CustomException {
-//		UserDetailDto userDetailDto;
-//		try {
-//			List<User> users = this.repository.findByUsernameAndPassword(loginDto.getUserName(),
-//					loginDto.getPassword());
-//			if (users.size() > 0) {
-//				User user = users.get(0);
-//				userDetailDto = new UserDetailDto(user.getUserId(), user.getUsername(), user.getEmailId(),
-//						user.getFirstName(), user.getLastName(), user.getRole());
-//			}
-//		} catch (Exception e) {
-//			log.error(e.getMessage());
-//			throw new CustomException(e.getMessage());
-//		}
-//		return userDetailDto;
-//	}
+	@Override
+	public UserDetailDto login(Principal principal) throws CustomException {
+		UserDetailDto userDetailDto;
+		try {
+			Optional<User> userInDb = this.repository.findByUsername(principal.getName());
+			if (userInDb.isPresent()) {
+				User user = userInDb.get();
+				userDetailDto = new UserDetailDto(user.getUserId(), user.getUsername(), user.getEmailId(),
+						user.getFirstName(), user.getLastName(), user.getRole());
+				return userDetailDto;
+			} else {
+				throw new Exception("Please Enter Correct Username!");
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new CustomException(e.getMessage());
+		}
+	}
 
 }
