@@ -20,7 +20,6 @@ export class AlertComponent implements OnInit, OnDestroy {
 
   myAlertFunction(res) {
     if (res != undefined) {
-      console.log("isSuccess" + res.isSuccess);
       this.message = res.message;
       this.isSuccess = res.isSuccess;
       this.isError = res.isError;

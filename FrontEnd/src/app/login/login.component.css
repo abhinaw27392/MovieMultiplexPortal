@@ -1,0 +1,14 @@
+.login {
+    margin-left: 37%;
+    margin-right: 37%;
+    margin-top: 11%;
+    background-color: #e7e7e9;
+    border: 1px whitesmoke solid;
+}
+.formclass {
+    margin: 15%;
+}
+.loginbutton {
+    width: 100%;
+    text-align: center;
+}

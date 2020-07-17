@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
@@ -6,6 +6,8 @@ import { Subject } from 'rxjs';
 import { MovieDataService } from './../service/data/movie-data.service';
 import { Movie } from './../model/movie'
 import { AlertService } from './../service/alert.service';
+import { AuthenticationService } from '../service/authentication.service';
+import { CustomValidatorsService } from './../service/custom-validators.service';
 
 @Component({
   selector: 'app-movie-management',
@@ -16,8 +18,7 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
   movieData: Movie[];
   movie: any = "";
   modalTitle: string;
-  // hardcoded for now 
-  userId = "5efefe20f1975c11122e8ca7";
+  userId = this.authService.userId;
 
   movieName: string;
   movieCategory: string;
@@ -26,41 +27,25 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
   releaseDate: string;
 
   movieFormGroup: FormGroup;
-  constructor(private movieService: MovieDataService, private formBuilder: FormBuilder, private alertService: AlertService) {
+  constructor(private movieService: MovieDataService, private formBuilder: FormBuilder,
+    private alertService: AlertService, private authService: AuthenticationService,
+    private customValidators: CustomValidatorsService) {
     this.movieFormGroup = formBuilder.group({
-      "movie_name": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
-      "category": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
-      "producer": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
-      "director": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
-      "release_date": new FormControl("", Validators.compose([Validators.required, this.dateValidator]))
+      "movie_name": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.customValidators.spaceValidator])),
+      "category": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.customValidators.spaceValidator])),
+      "producer": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.customValidators.spaceValidator])),
+      "director": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.customValidators.spaceValidator])),
+      "release_date": new FormControl("", Validators.compose([Validators.required, this.customValidators.dateValidator]))
     });
-  }
-  // custom validators
-  // for space validation
-  spaceValidator(formControl: FormControl) {
-    if (formControl.value != null && formControl.value.trim() == "") {
-      return {
-        "space": true
-      }
-    }
-  }
-  dateValidator(formControl: FormControl) {
-    let dateRegex = /^\d{4}[./-]\d{2}[./-]\d{2}$/;
-    if (formControl.value != null) {
-      if (!formControl.value.match(dateRegex)) {
-        return {
-          "dateValidator": true
-        }
-      }
-    }
   }
 
   getAllMovieData() {
-    console.log("getAllMovieData executing.........");
     this.movieService.getallData().subscribe((data: Movie[]) => {
       this.movieData = data;
       this.rerender();
-    }, (err) => { console.log(err) });
+    }, (err) => {
+      this.alertService.error(err.error.message, true);
+    });
   }
 
   saveMovie() {
@@ -73,18 +58,18 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   addMovie() {
     this.getValueFromForm();
-    this.movieService.addMovie(new Movie(this.movieName, this.movieCategory, this.movieProducer, this.movieDirector, this.releaseDate), this.userId).subscribe(
-      (response: Movie) => {
-        console.log(response);
-        this.movieData.push(response);
-        this.alertService.success("Movie added successfully!", true);
-        this.getAllMovieData();
-        this.rerender();
-        this.movieFormGroup.reset();
-      }, (err) => {
-        this.alertService.error(err, true);
-      }
-    );
+    this.movieService.addMovie(new Movie(this.movieName, this.movieCategory, this.movieProducer,
+      this.movieDirector, this.releaseDate), this.userId).subscribe(
+        (response: Movie) => {
+          this.movieData.push(response);
+          this.alertService.success("Movie added successfully!", true);
+          this.getAllMovieData();
+          this.rerender();
+          this.movieFormGroup.reset();
+        }, (err) => {
+          this.alertService.error(err.error.message, true);
+        }
+      );
   }
 
   getEachRowMovieDetails(id: string) {
@@ -94,7 +79,7 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
         this.movie = data;
         this.setValueToEditForm();
       }, (err) => {
-        this.alertService.error(err, true);
+        this.alertService.error(err.error.message, true);
       }
     );
   }
@@ -122,32 +107,30 @@ export class MovieManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   updateMovie() {
     this.getValueFromForm();
-    this.movieService.updateMovie(this.movie.id, new Movie(this.movieName, this.movieCategory, this.movieProducer, this.movieDirector, this.releaseDate), this.userId).subscribe(
-      (response: Movie) => {
-        console.log(response);
-        this.alertService.success("Movie updated successfully!", true);
-        this.getAllMovieData();
-        this.rerender();
-        this.movieFormGroup.reset();
-        this.movie = "";
-      }, (err) => {
-        this.alertService.error(err, true);
-      }
-    );
+    this.movieService.updateMovie(this.movie.id, new Movie(this.movieName, this.movieCategory,
+      this.movieProducer, this.movieDirector, this.releaseDate), this.userId).subscribe(
+        (response: Movie) => {
+          this.alertService.success("Movie updated successfully!", true);
+          this.getAllMovieData();
+          this.rerender();
+          this.movieFormGroup.reset();
+          this.movie = "";
+        }, (err) => {
+          this.alertService.error(err.error.message, true);
+        }
+      );
   }
 
   onClickOnDelete() {
-    console.log(this.movie.id);
     this.movieService.deleteMovie(this.movie.id, this.userId).subscribe(
       (response) => {
-        console.log(response);
         this.alertService.success("Movie deleted successfully!", true);
         this.getAllMovieData();
         this.rerender();
         this.movieFormGroup.reset();
         this.movie = "";
       }, err => {
-        this.alertService.error(err, true);
+        this.alertService.error(err.error.message, true);
       }
     )
   }

@@ -1,1 +1,31 @@
-<p>login works!</p>
+<div class="login">
+	<form [formGroup]="loginFormGroup" class="formclass" (ngSubmit)="login()">
+		<div class="form-group">
+			<input type="text" class="form-control" [placeholder]="loginFormLables[0]"
+				[formControl]="loginFormGroup.controls['username']" />
+			<small
+				*ngIf="loginFormGroup.controls['username'].hasError('required') && loginFormGroup.controls['username'].dirty"
+				class="text-warning">User Name Required!</small>
+			<small
+				*ngIf="loginFormGroup.controls['username'].hasError('maxlength') && loginFormGroup.controls['username'].dirty"
+				class="text-warning">Maximum 10 characters are allowed! </small>
+			<small *ngIf="loginFormGroup.controls['username'].hasError('space') && loginFormGroup.controls['username'].dirty &&
+                  !loginFormGroup.controls['username'].hasError('required')" class="text-warning">Please Enter Correct
+				User Name!</small>
+		</div>
+		<div class="form-group">
+			<input type="password" class="form-control" [placeholder]="loginFormLables[1]"
+				[formControl]="loginFormGroup.controls['password']" />
+			<small
+				*ngIf="loginFormGroup.controls['password'].hasError('required') && loginFormGroup.controls['password'].dirty"
+				class="text-warning">Password Required!</small>
+			<small
+				*ngIf="loginFormGroup.controls['password'].hasError('maxlength') && loginFormGroup.controls['password'].dirty"
+				class="text-warning">Maximum 20 characters are allowed! </small>
+			<small *ngIf="loginFormGroup.controls['password'].hasError('space') && loginFormGroup.controls['password'].dirty &&
+                  !loginFormGroup.controls['password'].hasError('required')" class="text-warning">Please Enter Correct
+				Password!</small>
+		</div>
+		<button type="submit" class="btn btn-primary loginbutton" [disabled]="!loginFormGroup.valid">Login</button>
+	</form>
+</div>

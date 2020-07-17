@@ -1,8 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DataTablesModule } from 'angular-datatables';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,10 +13,9 @@ import { MovieManagementComponent } from './movie-management/movie-management.co
 import { MultiplexManagementComponent } from './multiplex-management/multiplex-management.component';
 import { AllotMovieComponent } from './allot-movie/allot-movie.component';
 import { SearchComponent } from './search/search.component';
-import { ErrorComponent } from './error/error.component';
 import { AlertComponent } from './alert/alert.component';
-
-
+import { HttpInterceptorService } from './service/http-interceptor.service';
+import { SignUpComponent } from './sign-up/sign-up.component';
 
 @NgModule({
   declarations: [
@@ -28,8 +27,8 @@ import { AlertComponent } from './alert/alert.component';
     MultiplexManagementComponent,
     AllotMovieComponent,
     SearchComponent,
-    ErrorComponent,
-    AlertComponent
+    AlertComponent,
+    SignUpComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +38,8 @@ import { AlertComponent } from './alert/alert.component';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  // register our service as interceptor-service
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

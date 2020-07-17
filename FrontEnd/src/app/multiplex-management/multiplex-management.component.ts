@@ -6,6 +6,8 @@ import { Subject } from 'rxjs';
 import { Multiplex } from './../model/multiplex';
 import { MultiplexDataService } from './../service/data/multiplex-data.service';
 import { AlertService } from '../service/alert.service';
+import { AuthenticationService } from '../service/authentication.service';
+import { CustomValidatorsService } from './../service/custom-validators.service';
 
 
 @Component({
@@ -17,45 +19,22 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
   multiplexData: Multiplex[];
   multiplex: any = "";
   modalTitle: string;
-  // hardcoded for now 
-  userId = "5efefe20f1975c11122e8ca7";
+
+  userId = this.authService.userId;
 
   multiplexName: string;
   address: string;
   numberOfScreens: number;
 
   multiplexFormGroup: FormGroup;
-  constructor(private multiplexService: MultiplexDataService, private formBuilder: FormBuilder, private alertService: AlertService) {
+  constructor(private multiplexService: MultiplexDataService, private formBuilder: FormBuilder,
+    private alertService: AlertService, private authService: AuthenticationService,
+    private customValidators: CustomValidatorsService) {
     this.multiplexFormGroup = formBuilder.group({
-      "multiplex_name": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.spaceValidator])),
-      "address": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(40), this.spaceValidator])),
-      "number_of_screen": new FormControl("", Validators.compose([Validators.required, this.zeroAndNegativeNotAllowed, this.maxNumberOfScreen]))
+      "multiplex_name": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(30), this.customValidators.spaceValidator])),
+      "address": new FormControl("", Validators.compose([Validators.required, Validators.maxLength(40), this.customValidators.spaceValidator])),
+      "number_of_screen": new FormControl("", Validators.compose([Validators.required, this.customValidators.zeroAndNegativeNotAllowed, this.customValidators.maxNumberOfScreen]))
     });
-  }
-  // custom validators
-  // for space validation in input feilds
-  spaceValidator(formControl: FormControl) {
-    if (formControl.value != null && formControl.value.trim() == "") {
-      return {
-        "space": true
-      }
-    }
-  }
-  // validator for maximum number of screen
-  maxNumberOfScreen(formControl: FormControl) {
-    if (formControl.value != null && formControl.value > 10) {
-      return {
-        "maxNumber": true
-      }
-    }
-  }
-  // validator for zero/negative number not allowed in screen number feild
-  zeroAndNegativeNotAllowed(formControl: FormControl) {
-    if (formControl.value != null && formControl.value <= 0) {
-      return {
-        "zeroAndNegativeNotAllowed": true
-      }
-    }
   }
 
   getAllMultiplexData() {
@@ -63,8 +42,7 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
       this.multiplexData = data;
       this.rerender();
     }, (err) => {
-      console.log(err);
-      this.alertService.error(err, true);
+      this.alertService.error(err.error.message, true);
     });
   }
 
@@ -80,15 +58,13 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
     this.getValueFromForm();
     this.multiplexService.addMultiplex(new Multiplex(this.multiplexName, this.address, this.numberOfScreens), this.userId).subscribe(
       (response: Multiplex) => {
-        console.log(response);
         this.multiplexData.push(response);
         this.alertService.success("Multiplex added successfully!", true);
         this.getAllMultiplexData();
         this.rerender();
         this.multiplexFormGroup.reset();
       }, (err) => {
-        console.log(err);
-        this.alertService.error(err, true);
+        this.alertService.error(err.error.message, true);
       }
     );
   }
@@ -98,11 +74,9 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
     this.multiplexService.getOneMultiplex(id).subscribe(
       (data) => {
         this.multiplex = data;
-        console.log(this.multiplex);
         this.setValueToEditForm();
       }, (err) => {
-        console.log(err);
-        this.alertService.error(err, true);
+        this.alertService.error(err.error.message, true);
       }
     );
   }
@@ -126,35 +100,30 @@ export class MultiplexManagementComponent implements OnInit, AfterViewInit, OnDe
 
   updateMultiplex() {
     this.getValueFromForm();
-    console.log(this.multiplexName);
     this.multiplexService.updateMultiplex(this.multiplex.id, new Multiplex(this.multiplexName, this.address, this.numberOfScreens),
       this.userId).subscribe(
         (response: Multiplex) => {
-          console.log(response);
           this.alertService.success("Multiplex updated successfully!", true);
           this.getAllMultiplexData();
           this.rerender();
           this.multiplexFormGroup.reset();
           this.multiplex = "";
         }, (err) => {
-          console.log(err);
-          this.alertService.error(err, true);
+          this.alertService.error(err.error.message, true);
         }
       );
   }
 
   onClickOnDelete() {
-    console.log(this.multiplex.id);
     this.multiplexService.deleteMultiplex(this.multiplex.id, this.userId).subscribe(
       (response) => {
-        console.log(response);
         this.alertService.success("Multiplex deleted successfully!", true);
         this.getAllMultiplexData();
         this.rerender();
         this.multiplexFormGroup.reset();
         this.multiplex = "";
       }, err => {
-        this.alertService.error(err, true);
+        this.alertService.error(err.error.message, true);
       }
     )
   }
