@@ -78,9 +78,9 @@ public class MovieController {
 		return new ResponseEntity<MovieDto>(movieDto, HttpStatus.OK);
 	}
 
-	@DeleteMapping(value = "/{movieId}",produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, Boolean>> deleteMovieById(@PathVariable String movieId, @RequestParam String userId)
-			throws Exception {
+	@DeleteMapping(value = "/{movieId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Boolean>> deleteMovieById(@PathVariable String movieId,
+			@RequestParam String userId) throws Exception {
 		try {
 			boolean isDeleted = this.movieService.deleteMovieById(movieId, userId);
 			Map<String, Boolean> map = new HashMap<>();
@@ -100,6 +100,18 @@ public class MovieController {
 		MovieMultiplexDetailsDto movieMultiplexDetailsDto;
 		try {
 			movieMultiplexDetailsDto = this.movieService.addMovieToMultiplex(userId, movieMultiplexDto);
+		} catch (Exception e) {
+			throw new WebServerException(e.getMessage(), e);
+		}
+		return new ResponseEntity<MovieMultiplexDetailsDto>(movieMultiplexDetailsDto, HttpStatus.OK);
+	}
+
+	@PutMapping("/movieMultiplex/{id}")
+	public ResponseEntity<MovieMultiplexDetailsDto> updateMovieToMultiplex(@PathVariable String id,
+			@RequestBody MovieMultiplexDto movieMultiplexDto, @RequestParam String userId) throws Exception {
+		MovieMultiplexDetailsDto movieMultiplexDetailsDto;
+		try {
+			movieMultiplexDetailsDto = this.movieService.updateMovieMultiplex(id, movieMultiplexDto, userId);
 		} catch (Exception e) {
 			throw new WebServerException(e.getMessage(), e);
 		}
@@ -127,6 +139,38 @@ public class MovieController {
 			throw new WebServerException(e.getMessage(), e);
 		}
 		return new ResponseEntity<List<MovieMultiplexDetailsDto>>(movieMultiplexDetailsDtoList, HttpStatus.OK);
+	}
+
+	@DeleteMapping(value = "/movieMultiplex/{id}")
+	public ResponseEntity<Map<String, Boolean>> deleteAllottedRecordById(@PathVariable String id,
+			@RequestParam String userId) throws Exception {
+		try {
+			boolean isDeleted = this.movieService.deleteAllottedRecordById(id, userId);
+			Map<String, Boolean> map = new HashMap<>();
+			if (isDeleted) {
+				map.put("deleted", true);
+				return new ResponseEntity<Map<String, Boolean>>(map, HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			throw new WebServerException(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	@DeleteMapping(value = "/movieMultiplex/delete/{multiplexId}")
+	public ResponseEntity<Map<String, Boolean>> deleteAllottedRecordByMultiplexId(@PathVariable String multiplexId,
+			@RequestParam String userId) throws Exception {
+		try {
+			boolean isDeleted = this.movieService.deleteAllottedRecordsByMultiplexId(multiplexId, userId);
+			Map<String, Boolean> map = new HashMap<>();
+			if (isDeleted) {
+				map.put("deleted", true);
+				return new ResponseEntity<Map<String, Boolean>>(map, HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			throw new WebServerException(e.getMessage(), e);
+		}
+		return null;
 	}
 
 	@GetMapping(value = "/searchMultiplex/{multiplexId}", produces = MediaType.APPLICATION_JSON_VALUE)

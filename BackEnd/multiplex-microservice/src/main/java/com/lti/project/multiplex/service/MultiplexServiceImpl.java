@@ -1,8 +1,10 @@
 package com.lti.project.multiplex.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -133,6 +135,7 @@ public class MultiplexServiceImpl implements MultiplexService {
 			Optional<Multiplex> multiplexInDb = repository.findById(multiplexId);
 			if (multiplexInDb.isPresent()) {
 				repository.deleteById(multiplexId);
+				this.movieFeignProxy.deleteAllottedRecordByMultiplexId(multiplexId, userId);
 				return true;
 			} else {
 				return false;

@@ -1,6 +1,7 @@
 package com.lti.project.movie.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -17,5 +18,11 @@ public interface MovieMultiplexRepository extends CrudRepository<MovieMultiplex,
 	List<MovieMultiplex> findAllByMultiplexId(String multiplexId);
 
 	List<MovieMultiplex> findAllByMultiplexIdAndScreenName(String multiplexId, String screenName);
+
+	void deleteAllByMovieId(String movieId);
+
+	Optional<MovieMultiplex> findByMultiplexId(String multiplexId);
+
+	void deleteAllByMultiplexId(String multiplexId);
 
 }

@@ -29,4 +29,10 @@ public interface MovieService {
 
 	List<MovieMultiplexSearchResultDto> getAllotedMovieMultiplexByMultiplexId(String multiplexId);
 
+	boolean deleteAllottedRecordsByMultiplexId(String multiplexId, String userId);
+
+	boolean deleteAllottedRecordById(String id, String userId);
+
+	MovieMultiplexDetailsDto updateMovieMultiplex(String id, MovieMultiplexDto movieMultiplexDto, String userId);
+
 }

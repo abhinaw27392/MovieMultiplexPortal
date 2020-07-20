@@ -78,8 +78,8 @@ public class MultiplexController {
 	}
 
 	@DeleteMapping("/{multiplexId}")
-	public ResponseEntity<Map<String, Boolean>> deleteMultiplexById(@PathVariable String multiplexId, @RequestParam String userId)
-			throws Exception {
+	public ResponseEntity<Map<String, Boolean>> deleteMultiplexById(@PathVariable String multiplexId,
+			@RequestParam String userId) throws Exception {
 		try {
 			boolean isDeleted = this.multiplexService.deleteMultiplexById(multiplexId, userId);
 			Map<String, Boolean> map = new HashMap<>();

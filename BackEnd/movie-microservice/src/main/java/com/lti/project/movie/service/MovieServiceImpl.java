@@ -140,6 +140,7 @@ public class MovieServiceImpl implements MovieService {
 			Optional<Movie> movieInDb = repository.findById(movieId);
 			if (movieInDb.isPresent()) {
 				repository.deleteById(movieId);
+				movieMultiplexRepository.deleteAllByMovieId(movieId);
 				return true;
 			} else {
 				return false;
@@ -156,22 +157,7 @@ public class MovieServiceImpl implements MovieService {
 		MovieMultiplexDetailsDto movieMultiplexDetailsDto;
 		try {
 			validateUser(userId);
-
-			// validation for screen alloted
-			List<MovieMultiplex> movieMultiplexList = movieMultiplexRepository.findAllByMultiplexIdAndScreenName(
-					movieMultiplexDto.getMultiplexId(), movieMultiplexDto.getScreenName());
-
-			for (MovieMultiplex movieMultiplexInDb : movieMultiplexList) {
-				MultiplexDto multiplex = this.multiplexFeignProxy.getMultiplexById(movieMultiplexInDb.getMultiplexId())
-						.getBody();
-				MovieDto movie = this.getMovieById(movieMultiplexInDb.getMovieId());
-				if (movieMultiplexInDb.getMultiplexId().equals(movieMultiplexDto.getMultiplexId())
-						&& movieMultiplexInDb.getScreenName().equals(movieMultiplexDto.getScreenName())) {
-					throw new Exception(movie.getMovieName().toUpperCase() + " is already alloted to "
-							+ movieMultiplexDto.getScreenName() + " of " + multiplex.getMultiplexName().toUpperCase()
-							+ ", " + multiplex.getAddress());
-				}
-			}
+			validateScreenNumber(movieMultiplexDto);
 
 			// convert movieMultiplexDto to MovieMultiplex document
 			MovieMultiplex movieMultiplex = new MovieMultiplex(null, movieMultiplexDto.getMovieId(),
@@ -303,6 +289,108 @@ public class MovieServiceImpl implements MovieService {
 			throw new CustomException(e.getMessage());
 		}
 		return movieMultiplexList;
+	}
+
+	@Override
+	public boolean deleteAllottedRecordsByMultiplexId(String multiplexId, String userId) throws CustomException {
+		try {
+			validateUser(userId);
+			List<MovieMultiplex> movieMultiplexList = movieMultiplexRepository.findAllByMultiplexId(multiplexId);
+			if (movieMultiplexList.size() > 0) {
+				movieMultiplexRepository.deleteAllByMultiplexId(multiplexId);
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new CustomException(e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean deleteAllottedRecordById(String id, String userId) throws CustomException {
+		try {
+			validateUser(userId);
+			Optional<MovieMultiplex> recordInDb = movieMultiplexRepository.findById(id);
+			if (recordInDb.isPresent()) {
+				movieMultiplexRepository.deleteById(id);
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new CustomException(e.getMessage());
+		}
+	}
+
+	@Override
+	public MovieMultiplexDetailsDto updateMovieMultiplex(String id, MovieMultiplexDto movieMultiplexDto, String userId)
+			throws CustomException {
+
+		MovieMultiplexDetailsDto movieMultiplexDetailsDto;
+		try {
+			validateUser(userId);
+
+			// validation for screen allotment when updating
+			List<MovieMultiplex> movieMultiplexList = movieMultiplexRepository.findAllByMultiplexIdAndScreenName(
+					movieMultiplexDto.getMultiplexId(), movieMultiplexDto.getScreenName());
+
+			Optional<MovieMultiplex> currentDataInDb = movieMultiplexRepository.findById(id);
+			MovieMultiplex currentData = currentDataInDb.get();
+
+			for (MovieMultiplex movieMultiplexInDb : movieMultiplexList) {
+				MultiplexDto multiplex = this.multiplexFeignProxy.getMultiplexById(movieMultiplexInDb.getMultiplexId())
+						.getBody();
+				MovieDto movie = this.getMovieById(movieMultiplexInDb.getMovieId());
+				if (movieMultiplexInDb.getMultiplexId().equals(movieMultiplexDto.getMultiplexId())
+						&& movieMultiplexInDb.getScreenName().equals(movieMultiplexDto.getScreenName())) {
+
+					// checking with current record
+					if (!currentData.getMovieId().equals(movieMultiplexInDb.getMovieId())
+							|| !currentData.getMultiplexId().equals(movieMultiplexInDb.getMultiplexId())
+							|| !currentData.getScreenName().equals(movieMultiplexInDb.getScreenName())) {
+						throw new Exception(movie.getMovieName().toUpperCase() + " is already alloted to "
+								+ movieMultiplexDto.getScreenName() + " of "
+								+ multiplex.getMultiplexName().toUpperCase() + ", " + multiplex.getAddress());
+					}
+				}
+
+			}
+
+			// convert movieMultiplexDto to MovieMultiplex document
+			MovieMultiplex movieMultiplex = new MovieMultiplex(id, movieMultiplexDto.getMovieId(),
+					movieMultiplexDto.getMultiplexId(), movieMultiplexDto.getScreenName(), userId);
+
+			movieMultiplex = movieMultiplexRepository.save(movieMultiplex);
+
+			movieMultiplexDetailsDto = getMovieMultiplexDetailsDto(movieMultiplex);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new CustomException(e.getMessage());
+		}
+		return movieMultiplexDetailsDto;
+
+	}
+
+	private void validateScreenNumber(MovieMultiplexDto movieMultiplexDto) throws Exception {
+
+		// validation for screen allotment when adding
+		List<MovieMultiplex> movieMultiplexList = movieMultiplexRepository.findAllByMultiplexIdAndScreenName(
+				movieMultiplexDto.getMultiplexId(), movieMultiplexDto.getScreenName());
+
+		for (MovieMultiplex movieMultiplexInDb : movieMultiplexList) {
+			MultiplexDto multiplex = this.multiplexFeignProxy.getMultiplexById(movieMultiplexInDb.getMultiplexId())
+					.getBody();
+			MovieDto movie = this.getMovieById(movieMultiplexInDb.getMovieId());
+			if (movieMultiplexInDb.getMultiplexId().equals(movieMultiplexDto.getMultiplexId())
+					&& movieMultiplexInDb.getScreenName().equals(movieMultiplexDto.getScreenName())) {
+				throw new Exception(movie.getMovieName().toUpperCase() + " is already alloted to "
+						+ movieMultiplexDto.getScreenName() + " of " + multiplex.getMultiplexName().toUpperCase() + ", "
+						+ multiplex.getAddress());
+			}
+		}
 	}
 
 }
