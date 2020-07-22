@@ -1,1 +1,113 @@
-<p>sign-up works!</p>
+<div class="register">
+    <form [formGroup]="signupFormGroup" class="registrationform" (ngSubmit)="saveUser()">
+        <h4>USER REGISTRATION</h4>
+        <br />
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <input class="form-control" type="text" [placeholder]="signUpFormLables[0]"
+                    [formControl]="signupFormGroup.controls['userName']" />
+                <small
+                    *ngIf="signupFormGroup.controls['userName'].hasError('required') && signupFormGroup.controls['userName'].dirty"
+                    class="text-warning">User Name Required!</small>
+                <small
+                    *ngIf="signupFormGroup.controls['userName'].hasError('maxlength') && signupFormGroup.controls['userName'].dirty"
+                    class="text-warning">Maximum 10 characters are allowed! </small>
+                <small *ngIf="signupFormGroup.controls['userName'].hasError('space') && signupFormGroup.controls['userName'].dirty &&
+              !signupFormGroup.controls['userName'].hasError('required')" class="text-warning">Please Enter
+                    Correct User Name!</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <input class="form-control" type="password" [placeholder]="signUpFormLables[1]"
+                    [formControl]="signupFormGroup.controls['password']" />
+                <small
+                    *ngIf="signupFormGroup.controls['password'].hasError('required') && signupFormGroup.controls['password'].dirty"
+                    class="text-warning">Password required!</small>
+                <small
+                    *ngIf="signupFormGroup.controls['password'].hasError('maxlength') && signupFormGroup.controls['password'].dirty"
+                    class="text-warning">Maximum 20 characters are allowed! </small>
+                <small *ngIf="signupFormGroup.controls['password'].hasError('space') && signupFormGroup.controls['password'].dirty &&
+              !signupFormGroup.controls['password'].hasError('required')" class="text-warning">Please Enter Correct
+                    Password!</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <input class="form-control" type="password" [placeholder]="signUpFormLables[2]"
+                    [formControl]="signupFormGroup.controls['confirmPassword']" />
+                <small
+                    *ngIf="signupFormGroup.controls['confirmPassword'].hasError('required') && signupFormGroup.controls['confirmPassword'].dirty"
+                    class="text-warning">Confirm Password required!</small>
+                <small
+                    *ngIf="signupFormGroup.controls['confirmPassword'].hasError('maxlength') && signupFormGroup.controls['confirmPassword'].dirty"
+                    class="text-warning">Maximum 20 characters are allowed! </small>
+                <small *ngIf="signupFormGroup.controls['confirmPassword'].hasError('space') && signupFormGroup.controls['confirmPassword'].dirty &&
+              !signupFormGroup.controls['confirmPassword'].hasError('required')" class="text-warning">Please Enter
+                    Correct
+                    Confirm Password!</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <input class="form-control" type="email" [placeholder]="signUpFormLables[3]"
+                    [formControl]="signupFormGroup.controls['emailId']" />
+                <small
+                    *ngIf="signupFormGroup.controls['emailId'].hasError('required') && signupFormGroup.controls['emailId'].dirty"
+                    class="text-warning">Email Id required!</small>
+                <small
+                    *ngIf="signupFormGroup.controls['emailId'].hasError('email') && signupFormGroup.controls['emailId'].dirty"
+                    class="text-warning">Invalid Email Id!</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <input class="form-control" type="text" [placeholder]="signUpFormLables[4]"
+                    [formControl]="signupFormGroup.controls['firstName']" />
+                <small
+                    *ngIf="signupFormGroup.controls['firstName'].hasError('required') && signupFormGroup.controls['firstName'].dirty"
+                    class="text-warning">First Name required!</small>
+                <small
+                    *ngIf="signupFormGroup.controls['firstName'].hasError('maxlength') && signupFormGroup.controls['firstName'].dirty"
+                    class="text-warning">Maximum 20 characters are allowed! </small>
+                <small *ngIf="signupFormGroup.controls['firstName'].hasError('space') && signupFormGroup.controls['firstName'].dirty &&
+              !signupFormGroup.controls['firstName'].hasError('required')" class="text-warning">Please Enter Correct
+                    First Name!</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <input class="form-control" type="text" [placeholder]="signUpFormLables[5]"
+                    [formControl]="signupFormGroup.controls['lastName']" />
+                <small
+                    *ngIf="signupFormGroup.controls['lastName'].hasError('required') && signupFormGroup.controls['lastName'].dirty"
+                    class="text-warning">Last Name required!</small>
+                <small
+                    *ngIf="signupFormGroup.controls['lastName'].hasError('maxlength') && signupFormGroup.controls['lastName'].dirty"
+                    class="text-warning">Maximum 20 characters are allowed! </small>
+                <small *ngIf="signupFormGroup.controls['lastName'].hasError('space') && signupFormGroup.controls['lastName'].dirty &&
+                !signupFormGroup.controls['lastName'].hasError('required')" class="text-warning">Please Enter Correct
+                    Last Name!</small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <input class="form-control" type="text" [placeholder]="signUpFormLables[6]"
+                    [formControl]="signupFormGroup.controls['role']" />
+                <small
+                    *ngIf="signupFormGroup.controls['role'].hasError('required') && signupFormGroup.controls['role'].dirty"
+                    class="text-warning">Role required!</small>
+                <small
+                    *ngIf="signupFormGroup.controls['role'].hasError('maxlength') && signupFormGroup.controls['role'].dirty"
+                    class="text-warning">Maximum 10 characters are allowed! </small>
+                <small *ngIf="signupFormGroup.controls['role'].hasError('space') && signupFormGroup.controls['role'].dirty &&
+                    !signupFormGroup.controls['role'].hasError('required')" class="text-warning">Please Enter Correct
+                    Role!</small>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" [routerLink]="['/login']">Close</button>
+            <button type="submit" class="btn btn-success" [disabled]="!signupFormGroup.valid">Register</button>
+        </div>
+    </form>
+</div>

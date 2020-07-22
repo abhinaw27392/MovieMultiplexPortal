@@ -24,6 +24,7 @@
     "datatables.net-dt": "^1.10.21",
     "jquery": "^3.5.1",
     "json-server": "^0.16.1",
+    "ng-multiselect-dropdown": "^0.2.10",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"

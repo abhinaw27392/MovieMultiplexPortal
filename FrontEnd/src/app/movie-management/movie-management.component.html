@@ -20,7 +20,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of movieData">
-        <td style="text-align: center;">
+        <td>
           <a title="Del Movie" data-toggle="modal" data-target="#deleteModal" style="cursor: pointer;"
             (click)="getEachRowMovieDetails(data.id)"><img src="assets/icons/trash-alt-solid.svg" alt="Del" /></a>
           <a title="Edit Movie" data-toggle="modal" data-target="#movieModal" style="margin-left: 30px;cursor: pointer;"

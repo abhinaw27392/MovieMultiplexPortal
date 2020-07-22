@@ -1,0 +1,13 @@
+.register {
+    margin-left: 27%;
+    margin-right: 27%;
+    margin-top: 1%;
+    background-color: #e7e7e9;
+    border: 1px whitesmoke solid;
+}
+.registrationform {
+    margin: 5%;
+}
+h4 {
+    text-align: center;
+}
