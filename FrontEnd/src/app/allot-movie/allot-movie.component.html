@@ -50,36 +50,29 @@
                             <label class="col-sm-4">{{movieAllottedFormLabels[0]}}</label>
                             <ng-multiselect-dropdown class="col-sm-8"
                                 [formControl]="movieMultiplexFormGroup.controls['movie_name']"
-                                [settings]="movieDropdownSettings" 
-                                [data]="movieData"
-                                [placeholder]="'Select Movie'" 
-                                >
+                                [settings]="movieDropdownSettings" [data]="movieData" [placeholder]="'Select Movie'">
                             </ng-multiselect-dropdown>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-4">{{movieAllottedFormLabels[1]}}</label>
                             <ng-multiselect-dropdown class="col-sm-8"
-                                [formControl]="movieMultiplexFormGroup.controls['multiplex_name']" 
-                                [settings]="multiplexDropdownSettings"
-                                [data]="multiplexData"
-                                [placeholder]="'Select Multiplex'"
-                                (onSelect)="onMultiplexSelect($event)">
+                                [formControl]="movieMultiplexFormGroup.controls['multiplex_name']"
+                                [settings]="multiplexDropdownSettings" [data]="multiplexData"
+                                [placeholder]="'Select Multiplex'" (onSelect)="onMultiplexSelect($event)">
                             </ng-multiselect-dropdown>
                         </div>
                         <div *ngIf="screenCheck" class="form-group row">
                             <label class="col-sm-4">{{movieAllottedFormLabels[2]}}</label>
                             <ng-multiselect-dropdown class="col-sm-8"
                                 [formControl]="movieMultiplexFormGroup.controls['screen_name']"
-                                [placeholder]="'Select Screen'" 
-                                [settings]="screenDropdownSettings" 
-                                [data]="screenDataNew"
-                                >
+                                [placeholder]="'Select Screen'" [settings]="screenDropdownSettings"
+                                [data]="screenDataNew">
                             </ng-multiselect-dropdown>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-success" (click)="saveMovieMultiplex()"
-                                data-dismiss="modal" [disabled] = "!movieMultiplexFormGroup.valid">Save</button>
+                                data-dismiss="modal" [disabled]="!movieMultiplexFormGroup.valid">Save</button>
                         </div>
                     </form>
                 </div>
