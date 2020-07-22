@@ -118,6 +118,17 @@ public class MovieController {
 		return new ResponseEntity<MovieMultiplexDetailsDto>(movieMultiplexDetailsDto, HttpStatus.OK);
 	}
 
+	@GetMapping(value = "/movieMultiplex/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MovieMultiplexDetailsDto> getMovieMultiplexById(@PathVariable String id) throws Exception {
+		MovieMultiplexDetailsDto movieMultiplexDetailsDto;
+		try {
+			movieMultiplexDetailsDto = this.movieService.getMovieMultiplexById(id);
+		} catch (Exception e) {
+			throw new WebServerException(e.getMessage(), e);
+		}
+		return new ResponseEntity<MovieMultiplexDetailsDto>(movieMultiplexDetailsDto, HttpStatus.OK);
+	}
+
 	@GetMapping(value = "/movieMultiplex", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovieMultiplexDetailsDto>> getAllAllotedMovieMultiplex() throws Exception {
 		List<MovieMultiplexDetailsDto> movieMultiplexDetailsDtoList;
@@ -129,7 +140,7 @@ public class MovieController {
 		return new ResponseEntity<List<MovieMultiplexDetailsDto>>(movieMultiplexDetailsDtoList, HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/movieMultiplex/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/movieMultiplex/user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovieMultiplexDetailsDto>> getAllotedMovieMultiplexByUserId(@PathVariable String userId)
 			throws Exception {
 		List<MovieMultiplexDetailsDto> movieMultiplexDetailsDtoList;

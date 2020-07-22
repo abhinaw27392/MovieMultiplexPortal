@@ -160,18 +160,21 @@ public class MovieServiceImpl implements MovieService {
 			validateScreenNumber(movieMultiplexDto);
 
 			// convert movieMultiplexDto to MovieMultiplex document
-			MovieMultiplex movieMultiplex = new MovieMultiplex(null, movieMultiplexDto.getMovieId(),
-					movieMultiplexDto.getMultiplexId(), movieMultiplexDto.getScreenName(), userId);
+			if (movieMultiplexDto.getMovieId() != null && movieMultiplexDto.getMultiplexId() != null) {
+				MovieMultiplex movieMultiplex = new MovieMultiplex(null, movieMultiplexDto.getMovieId(),
+						movieMultiplexDto.getMultiplexId(), movieMultiplexDto.getScreenName(), userId);
 
-			movieMultiplex = movieMultiplexRepository.save(movieMultiplex);
+				movieMultiplex = movieMultiplexRepository.save(movieMultiplex);
 
-			movieMultiplexDetailsDto = getMovieMultiplexDetailsDto(movieMultiplex);
+				movieMultiplexDetailsDto = getMovieMultiplexDetailsDto(movieMultiplex);
+				return movieMultiplexDetailsDto;
+			} else {
+				throw new CustomException("movie Name or Multiplex Name can not be null");
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			throw new CustomException(e.getMessage());
 		}
-		return movieMultiplexDetailsDto;
-
 	}
 
 	@Override
@@ -356,22 +359,22 @@ public class MovieServiceImpl implements MovieService {
 								+ multiplex.getMultiplexName().toUpperCase() + ", " + multiplex.getAddress());
 					}
 				}
-
 			}
-
 			// convert movieMultiplexDto to MovieMultiplex document
-			MovieMultiplex movieMultiplex = new MovieMultiplex(id, movieMultiplexDto.getMovieId(),
-					movieMultiplexDto.getMultiplexId(), movieMultiplexDto.getScreenName(), userId);
+			if (movieMultiplexDto.getMovieId() != null && movieMultiplexDto.getMultiplexId() != null) {
+				MovieMultiplex movieMultiplex = new MovieMultiplex(id, movieMultiplexDto.getMovieId(),
+						movieMultiplexDto.getMultiplexId(), movieMultiplexDto.getScreenName(), userId);
+				movieMultiplex = movieMultiplexRepository.save(movieMultiplex);
 
-			movieMultiplex = movieMultiplexRepository.save(movieMultiplex);
-
-			movieMultiplexDetailsDto = getMovieMultiplexDetailsDto(movieMultiplex);
+				movieMultiplexDetailsDto = getMovieMultiplexDetailsDto(movieMultiplex);
+				return movieMultiplexDetailsDto;
+			} else {
+				throw new CustomException("movie Name or Multiplex Name can not be null");
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			throw new CustomException(e.getMessage());
 		}
-		return movieMultiplexDetailsDto;
-
 	}
 
 	private void validateScreenNumber(MovieMultiplexDto movieMultiplexDto) throws Exception {
@@ -391,6 +394,24 @@ public class MovieServiceImpl implements MovieService {
 						+ multiplex.getAddress());
 			}
 		}
+	}
+
+	@Override
+	public MovieMultiplexDetailsDto getMovieMultiplexById(String id) {
+		MovieMultiplexDetailsDto movieMultiplexDetailsDto;
+		try {
+			Optional<MovieMultiplex> movieMultiplexInDb = movieMultiplexRepository.findById(id);
+			if (!movieMultiplexInDb.isPresent())
+				throw new Exception("Error during fetching movie multiplex details: " + id);
+
+			MovieMultiplex movieMultiplex = movieMultiplexInDb.get();
+			movieMultiplexDetailsDto = getMovieMultiplexDetailsDto(movieMultiplex);
+
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new CustomException(e.getMessage());
+		}
+		return movieMultiplexDetailsDto;
 	}
 
 }

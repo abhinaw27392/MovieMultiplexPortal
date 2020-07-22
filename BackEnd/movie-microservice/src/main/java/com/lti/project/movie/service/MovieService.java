@@ -35,4 +35,6 @@ public interface MovieService {
 
 	MovieMultiplexDetailsDto updateMovieMultiplex(String id, MovieMultiplexDto movieMultiplexDto, String userId);
 
+	MovieMultiplexDetailsDto getMovieMultiplexById(String id);
+
 }
