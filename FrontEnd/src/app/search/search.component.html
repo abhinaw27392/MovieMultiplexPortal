@@ -1,1 +1,84 @@
-<p>search works!</p>
+<div>
+    <!--  radio buttons -->
+    <br /><br />
+    <div class="col-lg-4 mx-auto">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" checked (click)="isMovieSelect()">
+            <label class="form-check-label">Movie Search</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" (click)="isMultiplexSelect()">
+            <label class="form-check-label">Multiplex Search</label>
+        </div>
+    </div>
+    <br />
+
+    <!-- search box -->
+    <div *ngIf="isMovie" [formGroup]="searchFormGroup" class="col-lg-4 mx-auto">
+        <div class="input-group p-1 bg-light rounded rounded-pill">
+            <input type="search" placeholder="Search here for movie name..." (input)="searchMovie($event.target.value)"
+                class="form-control border-0 bg-light" #movieSearch
+                [formControl]="searchFormGroup.controls['movie_search']">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-link text-primary" (click)="searchMovie(movieSearch.value)"
+                    [disabled]="!searchFormGroup.valid"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+        <small
+            *ngIf="searchFormGroup.controls['movie_search'].hasError('maxlength') && searchFormGroup.controls['movie_search'].dirty"
+            class="text-warning">Maximum 20 characters are allowed! </small>
+    </div>
+    <div *ngIf="isMultiplex" class="col-lg-4 mx-auto">
+        <div class="input-group p-1 bg-light rounded rounded-pill">
+            <input type="search" placeholder="Search here for multiplex name..."
+                (input)="searchMultiplex($event.target.value)" class="form-control border-0 bg-light" #multiplexsearch
+                [formControl]="searchFormGroup.controls['multiplex_search']">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-link text-primary" (click)="searchMultiplex(multiplexsearch.value)"
+                    [disabled]="!searchFormGroup.valid"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+        <small
+            *ngIf="searchFormGroup.controls['multiplex_search'].hasError('maxlength') && searchFormGroup.controls['multiplex_search'].dirty"
+            class="text-warning">Maximum 20 characters are allowed! </small>
+    </div>
+    <br />
+    <!-- result table  -->
+    <table *ngIf="isData" class="table table-striped table-bordered table-sm row-border hover">
+        <thead>
+            <tr>
+                <th>{{searchResultFormLabels[0]}}</th>
+                <th>{{searchResultFormLabels[1]}}</th>
+                <th>{{searchResultFormLabels[2]}}</th>
+                <th>{{searchResultFormLabels[3]}}</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="!dataNotFound">
+            <tr *ngFor="let data of searchData">
+                <td>{{data.movieName}}</td>
+                <td>{{data.multiplexName}}</td>
+                <td>{{data.address}}</td>
+                <td>{{data.screenName}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- data not found -->
+    <br />
+    <table *ngIf="dataNotFound" class="table table-striped table-bordered table-sm row-border hover">
+        <thead>
+            <tr>
+                <th>{{searchResultFormLabels[0]}}</th>
+                <th>{{searchResultFormLabels[1]}}</th>
+                <th>{{searchResultFormLabels[2]}}</th>
+                <th>{{searchResultFormLabels[3]}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="no-records" style="text-align: center;">
+                <td colspan="4">-- No record found. --</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

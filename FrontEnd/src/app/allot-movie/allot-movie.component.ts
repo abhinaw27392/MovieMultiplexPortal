@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 
 import { MovieMultiplexDetails } from '../model/movie-multiplex-details';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
@@ -20,7 +20,7 @@ import { MovieMultiplex } from '../model/movie-multiplex';
   templateUrl: './allot-movie.component.html',
   styleUrls: ['./allot-movie.component.css']
 })
-export class AllotMovieComponent implements OnInit {
+export class AllotMovieComponent implements OnInit, AfterViewInit, OnDestroy {
 
   modalTitle: string;
   userId = this.authService.userId;
@@ -43,8 +43,7 @@ export class AllotMovieComponent implements OnInit {
   movieAllottedFormLabels: string[] = ['Movie Name', 'Multiplex Name', 'Screen Number'];
   movieMultiplexFormGroup: FormGroup;
 
-  constructor(private authService: AuthenticationService, private formBuilder: FormBuilder,
-    private customValidators: CustomValidatorsService, private movieService: MovieDataService,
+  constructor(private authService: AuthenticationService, private formBuilder: FormBuilder, private movieService: MovieDataService,
     private multiplexService: MultiplexDataService, private alertService: AlertService,
     private allotMovieService: AllotMovieService) {
     this.movieMultiplexFormGroup = this.formBuilder.group({
