@@ -16,12 +16,12 @@
 
     <!-- search box -->
     <div *ngIf="isMovie" [formGroup]="searchFormGroup" class="col-lg-4 mx-auto">
-        <div class="input-group p-1 bg-light rounded rounded-pill">
+        <div class="input-group p-1 search rounded rounded-pill">
             <input type="search" placeholder="Search here for movie name..." (input)="searchMovie($event.target.value)"
                 class="form-control border-0 bg-light" #movieSearch
                 [formControl]="searchFormGroup.controls['movie_search']">
             <div class="input-group-append">
-                <button type="submit" class="btn btn-link text-primary" (click)="searchMovie(movieSearch.value)"
+                <button type="submit" class="btn btn-link text-white" (click)="searchMovie(movieSearch.value)"
                     [disabled]="!searchFormGroup.valid"><i class="fa fa-search"></i></button>
             </div>
         </div>
@@ -30,12 +30,12 @@
             class="text-warning">Maximum 20 characters are allowed! </small>
     </div>
     <div *ngIf="isMultiplex" class="col-lg-4 mx-auto">
-        <div class="input-group p-1 bg-light rounded rounded-pill">
+        <div class="input-group p-1 search rounded rounded-pill">
             <input type="search" placeholder="Search here for multiplex name..."
                 (input)="searchMultiplex($event.target.value)" class="form-control border-0 bg-light" #multiplexsearch
                 [formControl]="searchFormGroup.controls['multiplex_search']">
             <div class="input-group-append">
-                <button type="submit" class="btn btn-link text-primary" (click)="searchMultiplex(multiplexsearch.value)"
+                <button type="submit" class="btn btn-link text-white" (click)="searchMultiplex(multiplexsearch.value)"
                     [disabled]="!searchFormGroup.valid"><i class="fa fa-search"></i></button>
             </div>
         </div>
